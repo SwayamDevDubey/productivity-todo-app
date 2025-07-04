@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Features Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-section {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #6366f1;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #e5e7eb;
+        }
+        .success { background: #10b981; color: white; }
+        .error { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <h1>📱 Mobile Features Test</h1>
+    
+    <div class="test-section">
+        <h2>Touch Events</h2>
+        <div class="test-item" id="touch-test">Touch me to test haptic feedback</div>
+        <div class="status" id="touch-status">Not tested</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Install Prompt</h2>
+        <div class="test-item" id="install-test">Test Install Banner</div>
+        <div class="status" id="install-status">Waiting for install prompt...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Network Detection</h2>
+        <div class="test-item" id="network-test">Test Network Status</div>
+        <div class="status" id="network-status">Online</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Device Features</h2>
+        <div class="test-item" id="vibration-test">Test Vibration</div>
+        <div class="test-item" id="orientation-test">Test Orientation</div>
+        <div class="status" id="device-status">Ready</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>PWA Features</h2>
+        <div class="test-item" id="sw-test">Test Service Worker</div>
+        <div class="test-item" id="cache-test">Test Cache</div>
+        <div class="status" id="pwa-status">Checking...</div>
+    </div>
+    
+    <script>
+        // Test touch and haptic feedback
+        document.getElementById('touch-test').addEventListener('click', function() {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+                document.getElementById('touch-status').textContent = 'Haptic feedback working!';
+                document.getElementById('touch-status').className = 'status success';
+            } else {
+                document.getElementById('touch-status').textContent = 'Vibration not supported';
+                document.getElementById('touch-status').className = 'status error';
+            }
+        });
+        
+        // Test install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-status').textContent = 'Install prompt available!';
+            document.getElementById('install-status').className = 'status success';
+        });
+        
+        document.getElementById('install-test').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                document.getElementById('install-status').textContent = `Install ${outcome}`;
+            } else {
+                document.getElementById('install-status').textContent = 'No install prompt available or already installed';
+                document.getElementById('install-status').className = 'status error';
+            }
+        });
+        
+        // Test network status
+        function updateNetworkStatus() {
+            const status = navigator.onLine ? 'Online' : 'Offline';
+            document.getElementById('network-status').textContent = status;
+            document.getElementById('network-status').className = navigator.onLine ? 'status success' : 'status error';
+        }
+        
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+        document.getElementById('network-test').addEventListener('click', updateNetworkStatus);
+        
+        // Test vibration
+        document.getElementById('vibration-test').addEventListener('click', () => {
+            if ('vibrate' in navigator) {
+                navigator.vibrate([100, 50, 100]);
+                document.getElementById('device-status').textContent = 'Vibration pattern played';
+                document.getElementById('device-status').className = 'status success';
+            } else {
+                document.getElementById('device-status').textContent = 'Vibration not supported';
+                document.getElementById('device-status').className = 'status error';
+            }
+        });
+        
+        // Test orientation
+        document.getElementById('orientation-test').addEventListener('click', () => {
+            const orientation = screen.orientation ? screen.orientation.angle : 'Unknown';
+            document.getElementById('device-status').textContent = `Orientation: ${orientation}°`;
+            document.getElementById('device-status').className = 'status success';
+        });
+        
+        // Test Service Worker
+        document.getElementById('sw-test').addEventListener('click', () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').then(() => {
+                    document.getElementById('pwa-status').textContent = 'Service Worker registered!';
+                    document.getElementById('pwa-status').className = 'status success';
+                }).catch(() => {
+                    document.getElementById('pwa-status').textContent = 'Service Worker registration failed';
+                    document.getElementById('pwa-status').className = 'status error';
+                });
+            } else {
+                document.getElementById('pwa-status').textContent = 'Service Worker not supported';
+                document.getElementById('pwa-status').className = 'status error';
+            }
+        });
+        
+        // Test cache
+        document.getElementById('cache-test').addEventListener('click', async () => {
+            if ('caches' in window) {
+                try {
+                    const cache = await caches.open('test-cache');
+                    await cache.add('/');
+                    document.getElementById('pwa-status').textContent = 'Cache API working!';
+                    document.getElementById('pwa-status').className = 'status success';
+                } catch (error) {
+                    document.getElementById('pwa-status').textContent = 'Cache API error: ' + error.message;
+                    document.getElementById('pwa-status').className = 'status error';
+                }
+            } else {
+                document.getElementById('pwa-status').textContent = 'Cache API not supported';
+                document.getElementById('pwa-status').className = 'status error';
+            }
+        });
+        
+        // Initial checks
+        updateNetworkStatus();
+        
+        // Check if app is in standalone mode
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            document.getElementById('install-status').textContent = 'App is installed (standalone mode)';
+            document.getElementById('install-status').className = 'status success';
+        }
+        
+        // Check PWA features on load
+        setTimeout(() => {
+            if ('serviceWorker' in navigator && 'caches' in window) {
+                document.getElementById('pwa-status').textContent = 'PWA features supported';
+                document.getElementById('pwa-status').className = 'status success';
+            } else {
+                document.getElementById('pwa-status').textContent = 'Limited PWA support';
+                document.getElementById('pwa-status').className = 'status error';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
