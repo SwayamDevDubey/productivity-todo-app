@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <title>Mobile Test - Productivity Todo App</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional mobile test styles */
+        .mobile-test-info {
+            position: fixed;
+            top: 0;
+            right: 0;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            font-size: 12px;
+            z-index: 9999;
+            max-width: 200px;
+            border-radius: 0 0 0 10px;
+        }
+        
+        .screen-info {
+            margin-bottom: 5px;
+        }
+        
+        .orientation-info {
+            color: #fbbf24;
+        }
+        
+        .viewport-info {
+            color: #10b981;
+        }
+        
+        .safe-area-info {
+            color: #f472b6;
+        }
+        
+        /* Visual indicators for testing */
+        .test-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.1;
+            background-image: 
+                linear-gradient(90deg, #f00 0%, transparent 1%),
+                linear-gradient(0deg, #f00 0%, transparent 1%);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile test info overlay -->
+    <div class="mobile-test-info">
+        <div class="screen-info">
+            <strong>Screen:</strong><br>
+            <span id="screen-size"></span>
+        </div>
+        <div class="viewport-info">
+            <strong>Viewport:</strong><br>
+            <span id="viewport-size"></span>
+        </div>
+        <div class="orientation-info">
+            <strong>Orientation:</strong><br>
+            <span id="orientation"></span>
+        </div>
+        <div class="safe-area-info">
+            <strong>Safe Area:</strong><br>
+            <span id="safe-area"></span>
+        </div>
+    </div>
+    
+    <!-- Test grid for visual alignment -->
+    <div class="test-grid"></div>
+    
+    <!-- Include your app content -->
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-tasks"></i> Mobile Test</h1>
+                <div class="header-actions">
+                    <button class="settings-btn" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="test">
+                <i class="fas fa-mobile-alt"></i> Mobile Test
+            </button>
+            <button class="tab-btn" data-tab="layout">
+                <i class="fas fa-th-large"></i> Layout
+            </button>
+            <button class="tab-btn" data-tab="touch">
+                <i class="fas fa-hand-point-up"></i> Touch
+            </button>
+        </nav>
+
+        <!-- Test Content -->
+        <div class="tab-content active" style="padding: 1rem;">
+            <div class="task-input-section">
+                <h3>Input Elements Test</h3>
+                <div class="input-group">
+                    <input type="text" placeholder="Test input field...">
+                    <button class="add-btn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="task-options">
+                    <select>
+                        <option>Dropdown Test</option>
+                        <option>Option 2</option>
+                    </select>
+                    <input type="datetime-local">
+                </div>
+            </div>
+
+            <div class="mood-tracker">
+                <h3>Touch Target Test</h3>
+                <div class="mood-options">
+                    <button class="mood-btn">😊</button>
+                    <button class="mood-btn">😐</button>
+                    <button class="mood-btn">😰</button>
+                    <button class="mood-btn">🧠</button>
+                    <button class="mood-btn">😴</button>
+                </div>
+            </div>
+
+            <div class="task-filters">
+                <button class="filter-btn active">All</button>
+                <button class="filter-btn">Today</button>
+                <button class="filter-btn">High Priority</button>
+                <button class="filter-btn">Completed</button>
+            </div>
+
+            <div class="tasks-list">
+                <div class="task-item high-priority">
+                    <input type="checkbox" class="task-checkbox">
+                    <div class="task-content">
+                        <div class="task-title">Sample task for mobile testing with longer text to check wrapping</div>
+                        <div class="task-meta">
+                            <span>High Priority</span>
+                            <span>Due: Tomorrow</span>
+                            <span>Work</span>
+                            <span>😊 Happy</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="task-action-btn" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="task-action-btn" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; padding: 1rem; background: white; border-radius: 10px;">
+                <h3>Scroll Test Area</h3>
+                <p>This area tests scrolling behavior and safe areas.</p>
+                <div style="height: 500px; background: linear-gradient(45deg, #f0f0f0, #e0e0e0); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                    <div style="text-align: center; color: #666;">
+                        <i class="fas fa-arrows-alt" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <br>Scroll Test Content
+                        <br>Check for overflows and clipping
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile test script
+        function updateMobileInfo() {
+            // Screen information
+            document.getElementById('screen-size').textContent = 
+                `${screen.width} × ${screen.height}`;
+            
+            // Viewport information
+            document.getElementById('viewport-size').textContent = 
+                `${window.innerWidth} × ${window.innerHeight}`;
+            
+            // Orientation
+            const orientation = screen.orientation ? 
+                screen.orientation.type : 
+                (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait');
+            document.getElementById('orientation').textContent = orientation;
+            
+            // Safe area (if supported)
+            const safeAreaTop = getComputedStyle(document.documentElement)
+                .getPropertyValue('env(safe-area-inset-top)') || '0px';
+            const safeAreaBottom = getComputedStyle(document.documentElement)
+                .getPropertyValue('env(safe-area-inset-bottom)') || '0px';
+            document.getElementById('safe-area').textContent = 
+                `T:${safeAreaTop} B:${safeAreaBottom}`;
+        }
+
+        // Update on load and resize
+        updateMobileInfo();
+        window.addEventListener('resize', updateMobileInfo);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(updateMobileInfo, 100);
+        });
+
+        // Test for touch events
+        document.addEventListener('touchstart', function(e) {
+            console.log('Touch detected:', e.touches.length, 'fingers');
+        });
+
+        // Log viewport changes
+        window.addEventListener('resize', function() {
+            console.log('Viewport changed:', window.innerWidth, 'x', window.innerHeight);
+        });
+
+        // Check for keyboard opening (mobile)
+        let initialViewportHeight = window.innerHeight;
+        window.addEventListener('resize', function() {
+            const currentHeight = window.innerHeight;
+            const heightDifference = initialViewportHeight - currentHeight;
+            
+            if (heightDifference > 150) {
+                console.log('Virtual keyboard likely opened');
+                document.body.classList.add('keyboard-open');
+            } else {
+                console.log('Virtual keyboard likely closed');
+                document.body.classList.remove('keyboard-open');
+            }
+        });
+    </script>
+</body>
+</html>
