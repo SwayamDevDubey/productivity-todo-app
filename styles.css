@@ -982,6 +982,7 @@ select {
         overflow-x: hidden;
         width: 100%;
         max-width: 100vw;
+        position: relative;
     }
     
     body {
@@ -989,6 +990,10 @@ select {
         padding-bottom: env(safe-area-inset-bottom);
         margin: 0;
         padding: 0;
+        /* Improve mobile scrolling */
+        -webkit-overflow-scrolling: touch;
+        /* Prevent pull-to-refresh on some mobile browsers */
+        overscroll-behavior-y: contain;
     }
     
     #app {
@@ -1257,6 +1262,18 @@ select {
     .tab-btn {
         padding: 0.6rem 0.5rem;
         font-size: 0.8rem;
+        min-width: 70px;
+    }
+    
+    /* Improve input field layout on very small screens */
+    .input-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .add-btn {
+        width: 100%;
+        justify-content: center;
     }
     
     .task-input-section,
@@ -1396,6 +1413,53 @@ input:focus {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Virtual keyboard handling */
+.keyboard-open #app {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.keyboard-open .nav-tabs {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    z-index: 101;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+}
+
+.keyboard-open .tab-content {
+    padding-bottom: 60px; /* Space for fixed nav tabs */
+}
+
+/* Landscape mobile improvements */
+@media (max-width: 926px) and (orientation: landscape) {
+    .header {
+        padding: 0.5rem 1rem;
+    }
+    
+    .header h1 {
+        font-size: 1rem;
+    }
+    
+    .tab-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .timer-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .timer-time {
+        font-size: 1.5rem;
+    }
+    
+    .tab-content {
+        padding: 0.5rem;
+    }
 }
 
 /* Utility Classes */
